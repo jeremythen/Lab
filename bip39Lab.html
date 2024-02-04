@@ -216,7 +216,7 @@
 
         seedPhraseTextArea.value = seedPhrases.join(' ');
 
-        createHexTable(entropyWithChecksum);
+        createSeedPhrasesTable(checksumSplitIn11Bits);
 
         createAllWordsTable(seedPhrases);
 
@@ -324,13 +324,7 @@
         tableContainer.innerHTML = '';
     }
 
-    function createHexTable(hexString) {
-
-        const binaryLength = hexString.length * 4;
-
-        const binaryStr = BigInt('0x' + hexString).toString(2).padStart(binaryLength, '0');
-
-        const binaryStrSplittedBy11Bits = binaryStr.match(/.{1,11}/g) || [];
+    function createSeedPhrasesTable(binaryStrSplittedBy11Bits) {
 
         const table = document.createElement('table');
         table.classList.add('table', 'table-bordered');
@@ -390,7 +384,8 @@
         const thead = document.createElement('thead');
         thead.innerHTML = `
             <tr>
-                <th scope="col">Word Index</th>
+                <th scope="col">Word Index In Binary</th>
+                <th scope="col">Word Index In Decimal</th>
                 <th scope="col">Word</th>
             </tr>
         `;
@@ -407,6 +402,7 @@
             }
     
             row.innerHTML = `
+                <td>${index.toString(2).padStart(11, '0')}</td>
                 <td>${index}</td>
                 <td>${word}</td>
             `;
