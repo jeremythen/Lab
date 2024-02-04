@@ -152,7 +152,10 @@
         } else if(entropyOf256Bits) {
             hideContainer('entropyHash128Container');
         }
-        hashEntropy();
+        
+        if(entropyDataTextArea.value.trim() !== '') {
+            hashEntropy();
+        }
     }
 
     document.querySelectorAll("input[name='entropyTypeRadioGroup']").forEach((input) => {
