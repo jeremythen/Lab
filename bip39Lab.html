@@ -84,35 +84,35 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <p>Entropy Data. Feed free to manually put some stuff in there. Note: getting entropy from randomly moving the mouse is better than typing or copy/pasting something.</p>
+                <p>Entropy Data. Feel free to manually put some stuff in there. Note: getting entropy from randomly moving the mouse is better than typing or copy/pasting something.</p>
                 <textarea id="entropyDataTextArea" class="form-control" rows="5"></textarea>
             </div>
         </div>
         <div class="row">
             <p>Entropy needs to be a random number of 128 or 256 bits to generate a seed phrase of 12 or 24 words. Since the Entropy Data can be smaller or larger, I've decided to calculate the SHA-256 hash of the Entropy Data and use the resulting hash as our 256-bit Entropy.</p>
             <div class="col-12">
-                <p><span class="text-success">Entropy</span> (SHA-256 hash of entropy data)</p>
+                <p><span class="text-success">Entropy</span> (SHA-256 hash of entropy data):</p>
                 <p id="entropyHash" class="form-control labels"></p>
             </div>
         </div>
         <div class="row" id="entropyHash128Container">
             <p>Since <b>Entropy of 128 bits</b> is selected, we are going to use the first 16 bytes (first half) of the <span class="text-success">Entropy</span> hash as the entropy to generate a 12-word seed phrase.</p>
             <div class="col-12">
-                <p>Using the first 16 bytes (128 bits) of the <span class="text-success">Entropy</span> as the entropy</p>
+                <p>Using the first 16 bytes (128 bits) of the <span class="text-success">Entropy</span> as the entropy:</p>
                 <p id="entropyHash128" class="form-control labels"></p>
             </div>
         </div>
         <div class="row">
-            <p>The checksum is used to detect errors on the data.</p>
+            <p>The checksum is used to detect errors on the data, in case you wrote down the wrong word, the checksum check would fail and let you know that there might be something wrong with your words.</p>
             <p>The checksum is calculated by hashing the entropy. If <b>Entropy of 128 bits</b> is selected, then we are going to hash the first 16 bytes (first half) of the <span class="text-success">Entropy</span> hash and take the first half byte (4 bits) of the resulting hash as the checksum. Otherwise, we will hash the <span class="text-success">Entropy</span> and take the first byte (8 bits) and use it as the checksum.</p>
             <div class="col-12">
-                <p>SHA-256 hash of <span class="text-success">Entropy</span> to use for getting the checksum<span id="hashForChecksumLabel"></span></p>
+                <p>SHA-256 hash of <span class="text-success">Entropy</span> to use for getting the checksum<span id="hashForChecksumLabel"></span>:</p>
                 <p id="hashForChecksum" class="form-control labels"></p>
             </div>
         </div>
         <div class="row">
             <div class="col-12">
-                <p>Checksum <span id="checksumLabel"></span></p>
+                <p>Checksum <span id="checksumLabel"></span>:</p>
                 <p class="form-control text-primary labels">
                     <b><span id="checksumTextArea"></span></b>
                 </p>
@@ -121,21 +121,21 @@
         <div class="row">
             <div class="col-12">
                 <p>Now, we append the checksum to the end of the entropy</p>
-                <p><span class="text-success">Entropy</span> with checksum hex appended at the end</span></p>
+                <p><span class="text-success">Entropy</span> with checksum hex appended at the end:</span></p>
                 <p id="entropyHashWithChecksum" class="form-control labels"></p>
             </div>
         </div>
         <div class="row">
             <div class="col-12">
                 <p>We will now convert the entropy (with the checksum appended) to a binary string and separate them into groups of 11 bits. This is because there are 2048 words in the BIP39 list, and 2^11 = 2048. So we need to break the entropy into groups of 11 bits to then find the bip39 words indexed by each binary value.</p>
-                <p>Entropy with checksum in binary split by 11 bits</p>
+                <p>Entropy with checksum in binary split by 11 bits:</p>
                 <p id="entropyHashWithChecksumInBinaryTextArea" class="form-control labels"></p>
             </div>
         </div>
         <div class="row">
             <div class="col-12">
                 <p>This is the resulting seed phrase, 12 words if <b>Entropy of 128 bits</b> is selected, 24 words other wise. This is what you would write down and keep in a save place, imported in a software wallet like Metamask, etc.</p>
-                <p>Seed phrase</p>
+                <p>Seed phrase:</p>
                 <p id="seedPhraseTextArea" class="form-control labels"></p>
             </div>
         </div>
@@ -153,8 +153,15 @@
         </div>
         <div class="row">
             <div class="col-12">
+                <p>The probability of someone guessing your seed phrase of 12 words (132 bits) is 1 in 2^132 (1 in about 5444517870735015415413993718908291383296). Unlikely.</p>
+                <br>
+                <p>The probability of someone guessing your seed phrase of 24 words (264 bits) is 1 in 2^264 (1 in about 29642774844752946028434172162224104410437116074403984394101141506025761187823616). Very unlikely.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
                 <p>BIP39 words: <a target="_blank" href="https://github.com/bitcoin/bips/blob/master/bip-0039/english.txt">https://github.com/bitcoin/bips/blob/master/bip-0039/english.txt</a></p>
-                <p>All BIP39 words</p>
+                <p>All BIP39 words table</p>
                 <div id="all-words-table-container"></div>
             </div>
         </div>
