@@ -8,9 +8,9 @@ Is a simple html page to create some random entropy and generate bip39 seed phra
 
 To use it, simply download the html file and open it in any browser.
 
-Then, click on **Start Collecting mouse and keyboard Entropy**. Start moving the mouse round randomly and typing key. You will see the Entropy Data text area filling up.
+Then, click on **Start Collecting Entropy From Mouse And Keyboard**. Start moving the mouse round randomly and typing key. You will see the Entropy Data text area filling up. Or type/copy/paste something in the text area.
 
-When you are done creating entroy, then click on **Stop Collecting Entropy**. Then, click on **Hash!** to see the Entropy hash, checksum and seed phrases.
+When you are done creating entroy, then click on **Stop Collecting Entropy**. Then, click on **Derive Seed Phrase From Entropy** to see the Entropy hash, checksum and seed phrases.
 
 ### Bip39 HTML online preview
 

@@ -30,6 +30,21 @@
             margin-bottom: 36px;
         }
 
+        #entropyTypeContainer input[type="radio"], label {
+            cursor: pointer;
+        }
+
+        #entropyHashWithChecksumInBinaryTextArea {
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 8rem;
+            overflow: scroll;
+        }
+
+        #seedPhraseTextArea {
+            min-height: 6rem;
+            overflow: scroll;
+        }
+
     </style>
 
     <title>BIP-39 Lab</title>
@@ -38,84 +53,102 @@
 
     <div class="container">
         <h1 class="text-center">BIP-39 Lab</h1>
+        <h5><span class="text-danger">Disclaimer!</span> This tool is for learning, practicing and testing purposes only. Do not use it to create seed phrases to be used in a mainnet blockchain network.</h5>
+        <hr>
+        <p>Click on <b>Start Collecting Entropy From Mouse And Keyboard</b>, move the mouse around randomly and press some keys on the keyboard, or simply type/copy/paste something in the Entropy Data text area below to generate entropy data. Then click on <b>Stop Collecting Entropy</b> and then click on <b>Derive Seed Phrase From Entropy</b></p>
         <div class="row">
             <div class="col-12">
-                <button class="btn btn-outline-primary btn-sm" id="startCollectingEntropyButton" title="Collects entropy on mouse move and key press" onclick="startCollectingEntropy()">Start Collecting mouse and keyboard Entropy</button>
+                <button class="btn btn-outline-primary btn-sm" id="startCollectingEntropyButton" title="Collects entropy on mouse move and key press" onclick="startCollectingEntropy()">Start Collecting Entropy From Mouse And Keyboard</button>
                 <button disabled class="btn btn-outline-secondary btn-sm" id="stopCollectingEntropyButton" onclick="stopCollectingEntropy()">Stop Collecting Entropy</button>
                 <button class="btn btn-outline-warning btn-sm" id="resetEntropyDataButton" onclick="resetEntropyData()">Reset Entropy Data</button>
             </div>
         </div>
         <div class="row">
-            <div class="col-12 mt-2">
+            <p>Select <b>Entropy of 128 bits</b> to create a 12-word seed phrase. Select <b>Entropy of 256 bits</b> To create a 24-word seed phrase</p>
+            <div class="col-12 mt-2" id="entropyTypeContainer">
+                
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="entropyTypeRadioGroup" id="entropyOf128BitsRadio" checked>
-                    <label class="form-check-label" for="entropyOf128Bits">
+                    <label class="form-check-label" for="entropyOf128BitsRadio">
                         Entropy of 128 bits
                     </label>
                 </div>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="entropyTypeRadioGroup" id="entropyOf256BitsRadio">
-                    <label class="form-check-label" for="entropyOf256Bits">
+                    <label class="form-check-label " for="entropyOf256BitsRadio">
                         Entropy of 256 bits
                     </label>
                 </div>
-                <button class="btn btn-outline-success btn-sm" id="hashButton" onclick="hashEntropy()">Hash!</button>
+                <button class="btn btn-outline-success btn-sm" id="hashButton" onclick="hashEntropy()">Derive Seed Phrase From Entropy</button>
             </div>
         </div>
         <div class="row">
             <div class="col-12">
-                <p>Entropy Data</p>
-                <textarea disabled id="entropyDataTextArea" class="form-control" rows="5"></textarea>
+                <p>Entropy Data. Feed free to manually put some stuff in there. Note: getting entropy from randomly moving the mouse is better than typing or copy/pasting something.</p>
+                <textarea id="entropyDataTextArea" class="form-control" rows="5"></textarea>
             </div>
         </div>
         <div class="row">
+            <p>Entropy needs to be a random number of 128 or 256 bits to generate a seed phrase of 12 or 24 words. Since the Entropy Data can be smaller or larger, I've decided to calculate the SHA-256 hash of the Entropy Data and use the resulting hash as our 256-bit Entropy.</p>
             <div class="col-12">
                 <p><span class="text-success">Entropy</span> (SHA-256 hash of entropy data)</p>
-                <p id="entropyHash" class="form-control labels" disabled></p>
+                <p id="entropyHash" class="form-control labels"></p>
             </div>
         </div>
         <div class="row" id="entropyHash128Container">
+            <p>Since <b>Entropy of 128 bits</b> is selected, we are going to use the first 16 bytes (first half) of the <span class="text-success">Entropy</span> hash as the entropy to generate a 12-word seed phrase.</p>
             <div class="col-12">
                 <p>Using the first 16 bytes (128 bits) of the <span class="text-success">Entropy</span> as the entropy</p>
-                <p id="entropyHash128" class="form-control labels" disabled></p>
+                <p id="entropyHash128" class="form-control labels"></p>
             </div>
         </div>
         <div class="row">
+            <p>The checksum is used to detect errors on the data.</p>
+            <p>The checksum is calculated by hashing the entropy. If <b>Entropy of 128 bits</b> is selected, then we are going to hash the first 16 bytes (first half) of the <span class="text-success">Entropy</span> hash and take the first half byte (4 bits) of the resulting hash as the checksum. Otherwise, we will hash the <span class="text-success">Entropy</span> and take the first byte (8 bits) and use it as the checksum.</p>
             <div class="col-12">
                 <p>SHA-256 hash of <span class="text-success">Entropy</span> to use for getting the checksum<span id="hashForChecksumLabel"></span></p>
-                <p id="hashForChecksum" class="form-control labels" disabled></p>
+                <p id="hashForChecksum" class="form-control labels"></p>
             </div>
         </div>
         <div class="row">
             <div class="col-12">
                 <p>Checksum <span id="checksumLabel"></span></p>
-                <p class="form-control text-primary labels" disabled>
+                <p class="form-control text-primary labels">
                     <b><span id="checksumTextArea"></span></b>
                 </p>
             </div>
         </div>
         <div class="row">
             <div class="col-12">
+                <p>Now, we append the checksum to the end of the entropy</p>
                 <p><span class="text-success">Entropy</span> with checksum hex appended at the end</span></p>
-                <p id="entropyHashWithChecksum" class="form-control labels" disabled></p>
+                <p id="entropyHashWithChecksum" class="form-control labels"></p>
             </div>
         </div>
         <div class="row">
             <div class="col-12">
-                <p><span class="text-success">Entropy</span> with checksum in binary split by 11 bits</p>
-                <textarea type="text" id="entropyHashWithChecksumInBinaryTextArea" class="form-control" rows="3" disabled></textarea>
+                <p>We will now convert the entropy (with the checksum appended) to a binary string and separate them into groups of 11 bits. This is because there are 2048 words in the BIP39 list, and 2^11 = 2048. So we need to break the entropy into groups of 11 bits to then find the bip39 words indexed by each binary value.</p>
+                <p>Entropy with checksum in binary split by 11 bits</p>
+                <p id="entropyHashWithChecksumInBinaryTextArea" class="form-control labels"></p>
             </div>
         </div>
         <div class="row">
             <div class="col-12">
+                <p>This is the resulting seed phrase, 12 words if <b>Entropy of 128 bits</b> is selected, 24 words other wise. This is what you would write down and keep in a save place, imported in a software wallet like Metamask, etc.</p>
                 <p>Seed phrase</p>
-                <textarea disabled id="seedPhraseTextArea" class="form-control" rows="2"></textarea>
+                <p id="seedPhraseTextArea" class="form-control labels"></p>
             </div>
         </div>
         <div class="row">
             <div class="col-12">
                 <p>Seed phrase table</p>
-                <div id="table-container"></div>
+                <table class="table table-bordered" id="seedPhraseTable">
+                    <tr>
+                        <th scope="col">Word Index In Binary</th>
+                        <th scope="col">Word Index In Decimal</th>
+                        <th scope="col">Word</th>
+                    </tr>          
+                 </table>
             </div>
         </div>
         <div class="row">
@@ -172,17 +205,24 @@
 
     async function hashEntropy() {
 
+        if(entropyDataTextArea.value.trim() === '') {
+            alert('Please provide some entropy data.');
+            return;
+        }
+
         const useEntropyOf128Bits = entropyOf128BitsRadio.checked;
         const checksumHexLength = useEntropyOf128Bits ? 1 : 2;
+        const checksumBitLength = useEntropyOf128Bits ? 4 : 8;
+        const bitGroupLength = 11;
         
-        const entropyDataString = entropyData.join('');
+        const entropyDataString = entropyDataTextArea.value;
         let entropyDataHash = await hash(entropyDataString);
 
-        entropyHash.innerText = entropyDataHash;
+        entropyHash.innerHTML = `<b><span class="text-success">${entropyDataHash}</span></b>`;
 
         if(useEntropyOf128Bits) {
             const entropyOf128Bits = entropyDataHash.slice(0, 32);
-            entropyHash128.innerText = entropyOf128Bits;
+            entropyHash128.innerHTML = `<b><span class="text-success">${entropyOf128Bits}<span></b>`;
             entropyDataHash = entropyOf128Bits;
         }
 
@@ -192,13 +232,13 @@
 
         const checksumBits = hashOfEntropy.slice(0, checksumHexLength);
 
-        hashForChecksum.innerHTML = `<b><span class="text-primary">${checksumBits}</span></b>` + hashOfEntropy.slice(checksumHexLength);
+        hashForChecksum.innerHTML = `<b><span class="text-primary">${checksumBits}</span></b><span class="text-success">${hashOfEntropy.slice(checksumHexLength)}</span>`;
         hashForChecksumLabel.innerText = ` (sha256(${entropyDataHash}))`;
 
         checksumTextArea.innerText = checksumBits;
-        checksumLabel.innerText = ` (first ${checksumHexLength} character${useEntropyOf128Bits && 's'} of the hash for checksum)`;
+        checksumLabel.innerText = ` (first ${checksumHexLength} character${useEntropyOf128Bits ? '' : 's'} of the hash for checksum)`;
 
-        entropyHashWithChecksum.innerHTML = entropyDataHash + `<b><span class="text-primary">${checksumBits}</span></b>`;
+        entropyHashWithChecksum.innerHTML = `<span class="text-success">${entropyDataHash}<span><b><span class="text-primary">${checksumBits}</span></b>`;
 
         const bitLength = useEntropyOf128Bits ? 128 : 256;
 
@@ -209,12 +249,17 @@
             .padStart(bitLength, '0')
             .match(/.{1,11}/g);
 
-        entropyHashWithChecksumInBinaryTextArea.value = checksumSplitIn11Bits.join(' ');
+        const checksumSplitIn11BitsCopy = [...checksumSplitIn11Bits];
+        const lastBinary = checksumSplitIn11BitsCopy[checksumSplitIn11BitsCopy.length - 1];
+        const last4Bits = `<b><span class="text-primary">${lastBinary.slice(-checksumBitLength)}</span></b>`;
+        const newLastBinary = lastBinary.slice(0, 11 - checksumBitLength) + last4Bits;
+        checksumSplitIn11BitsCopy[checksumSplitIn11BitsCopy.length - 1] = newLastBinary;
+        entropyHashWithChecksumInBinaryTextArea.innerHTML = checksumSplitIn11BitsCopy.join(' ');
 
         const seedPhrases = checksumSplitIn11Bits
             .map(binary => bip39Words[parseInt(binary, 2)]);
 
-        seedPhraseTextArea.value = seedPhrases.join(' ');
+        seedPhraseTextArea.innerHTML = seedPhrases.join(' ');
 
         createSeedPhrasesTable(checksumSplitIn11Bits);
 
@@ -261,19 +306,16 @@
     }
 
     function appendToEntropy(data) {
-        entropyData.push(data);
-        entropyDataTextArea.value = entropyData.join('');
+        entropyDataTextArea.value += data;
     }
 
     function startCollectingEntropy () {
-        entropyData.length = 0;
         document.body.addEventListener('mousemove', handleMouseMove);
         document.body.addEventListener('keypress', handleKeyPress);
         startCollectingEntropyButton.disabled = true;
         stopCollectingEntropyButton.disabled = false;
         resetEntropyDataButton.disabled = true;
         hashButton.disabled = true;
-        resetEntropyData();
     }
 
     function stopCollectingEntropy() {
@@ -285,26 +327,14 @@
         hashButton.disabled = false;
     }
 
-    function hash128EntropyData() {
-        const entropyDataString = entropyData.join('');
-        const entropyDataHash = hash(entropyDataString, ALGORITHMS.SHA128);
-    }
-
-    function hash556EntropyData() {
-        const entropyDataString = entropyData.join('');
-        const entropyDataHash = hash(entropyDataString, ALGORITHMS.SHA256);
-    }
-
     function resetEntropyData() {
-        entropyData.length = 0;
-        entropyData.value = '';
-        entropyHash.innerText = '';
-        entropyHash128.innerText = '';
+        entropyHash.innerHTML = '';
+        entropyHash128.innerHTML = '';
         hashForChecksum.innerText = '';
         checksumTextArea.value = '';
         entropyHashWithChecksum.innerHTML = '';
-        entropyHashWithChecksumInBinaryTextArea.value = '';
-        seedPhraseTextArea.value = '';
+        entropyHashWithChecksumInBinaryTextArea.innerHTML = '';
+        seedPhraseTextArea.innerHTML = '';
         entropyDataTextArea.value = '';
         checksumLabel.innerText = '';
         checksumTextArea.innerText = '';
@@ -315,8 +345,9 @@
     }
 
     function clearSeedPhraseTable() {
-        const tableContainer = document.getElementById('table-container');
-        tableContainer.innerHTML = '';
+        const header = seedPhraseTable.tBodies[0].childNodes[0];
+        seedPhraseTable.tBodies[0].innerHTML = '';
+        seedPhraseTable.tBodies[0].appendChild(header);
     }
 
     function clearWordListTable() {
@@ -326,20 +357,7 @@
 
     function createSeedPhrasesTable(binaryStrSplittedBy11Bits) {
 
-        const table = document.createElement('table');
-        table.classList.add('table', 'table-bordered');
-
-        const thead = document.createElement('thead');
-        thead.innerHTML = `
-            <tr>
-                <th scope="col">Word Index In Binary</th>
-                <th scope="col">Word Index In Decimal</th>
-                <th scope="col">Word</th>
-            </tr>
-        `;
-        table.appendChild(thead);
-
-        const tbody = document.createElement('tbody');
+        clearSeedPhraseTable();
 
         binaryStrSplittedBy11Bits.forEach((binary, index) => {
 
@@ -359,15 +377,9 @@
                 <td>${word}</td>
             `;
 
-            tbody.appendChild(row);
+            seedPhraseTable.tBodies[0].appendChild(row);
+
         });
-
-        table.appendChild(tbody);
-
-        const tableContainer = document.getElementById('table-container');
-        tableContainer.innerHTML = '';
-
-        tableContainer.appendChild(table);
 
   }
 
